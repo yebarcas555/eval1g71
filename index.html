@@ -5,114 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Evaluación Fuentes de Energía - Grado 7</title>
 <style>
-:root{
-  --azul:#123b70;
-  --verde:#18824c;
-  --fondo:#eef4f1;
-  --texto:#111827;
-}
-
+:root{--azul:#123b70;--verde:#18824c;--fondo:#eef4f1;--texto:#111827}
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:linear-gradient(135deg,#eef4ff,#f2fff4);
-  color:var(--texto);
-  user-select:none;
-}
-
-header{
-  background:linear-gradient(90deg,var(--azul),var(--verde));
-  color:white;
-  text-align:center;
-  padding:26px 14px;
-}
-
-header h1{
-  margin:0;
-  font-size:32px;
-}
-
-header p{
-  margin:8px 0 0;
-}
-
-.container{
-  max-width:980px;
-  margin:auto;
-  padding:22px;
-}
-
-.card{
-  background:white;
-  border-radius:18px;
-  padding:24px;
-  margin-bottom:20px;
-  box-shadow:0 6px 20px rgba(0,0,0,.12);
-}
-
-input[type=text], select{
-  width:100%;
-  padding:14px;
-  margin:8px 0 14px;
-  border:1px solid #c8d0dc;
-  border-radius:12px;
-  font-size:16px;
-}
-
-button{
-  background:var(--azul);
-  color:white;
-  border:0;
-  border-radius:12px;
-  padding:14px 24px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-button:hover{
-  background:#0d2850;
-}
-
-.option{
-  display:block;
-  padding:15px;
-  margin:10px 0;
-  border:1px solid #d3dbea;
-  border-radius:14px;
-  background:#f8fbff;
-  cursor:pointer;
-}
-
-.option:hover{
-  background:#eaf2ff;
-}
-
-.hidden{
-  display:none;
-}
-
-.progress{
-  font-weight:bold;
-  color:var(--verde);
-  margin-bottom:10px;
-}
-
-.result{
-  font-size:24px;
-  font-weight:bold;
-  color:var(--azul);
-  text-align:center;
-}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef4ff,#f2fff4);color:var(--texto);user-select:none}
+header{background:linear-gradient(90deg,var(--azul),var(--verde));color:white;text-align:center;padding:26px 14px}
+header h1{margin:0;font-size:32px}
+header p{margin:8px 0 0}
+.container{max-width:980px;margin:auto;padding:22px}
+.card{background:white;border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+input[type=text], select{width:100%;padding:14px;margin:8px 0 14px;border:1px solid #c8d0dc;border-radius:12px;font-size:16px;user-select:text}
+select{background:white}
+button{background:var(--azul);color:white;border:0;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:bold;cursor:pointer}
+button:hover{background:#0d2850}
+.intro{border-left:6px solid var(--verde);background:#f7fff9}
+.option{display:block;padding:15px;margin:10px 0;border:1px solid #d3dbea;border-radius:14px;background:#f8fbff;cursor:pointer}
+.option:hover{background:#eaf2ff}
+.hidden{display:none}
+.progress{font-weight:bold;color:var(--verde);margin-bottom:10px}
+.result{font-size:24px;font-weight:bold;color:var(--azul);text-align:center}
+.small{color:#4b5563;font-size:14px}
+.badge{display:inline-block;background:#eaf7ef;color:#11683b;border:1px solid #bde6cc;padding:6px 10px;border-radius:999px;font-weight:bold;margin-top:8px}
 </style>
 </head>
+
 <body oncopy="return false" onpaste="return false" oncut="return false">
 
 <header>
   <h1>Evaluación en línea</h1>
   <p>Fuentes de energía — Grado 7° | Tecnología e Informática | IE San Miguel</p>
+  <span class="badge">33 preguntas · nota de 1 a 10 · orden aleatorio</span>
 </header>
 
 <div class="container">
@@ -120,8 +41,10 @@ button:hover{
   <section class="card" id="datosCard">
     <h2>Datos del estudiante</h2>
 
+    <label><strong>Nombre completo:</strong></label>
     <input type="text" id="nombre" placeholder="Nombre completo">
 
+    <label><strong>Grado:</strong></label>
     <select id="curso">
       <option value="">Seleccione el grado</option>
       <option value="7-1">7-1</option>
@@ -131,6 +54,12 @@ button:hover{
     <button onclick="startQuiz()">Iniciar evaluación</button>
   </section>
 
+  <section class="card intro">
+    <h2>Instrucciones</h2>
+    <p>Lee cada pregunta con atención y selecciona la respuesta correcta. Al seleccionar una opción, el sistema pasará automáticamente a la siguiente pregunta.</p>
+    <p class="small">Las preguntas y las opciones de respuesta se mezclan automáticamente para cada estudiante.</p>
+  </section>
+
   <section class="card hidden" id="quizCard">
     <div id="questionContainer"></div>
   </section>
@@ -138,204 +67,153 @@ button:hover{
   <section class="card hidden" id="resultCard">
     <div class="result" id="resultText"></div>
     <p id="studentText"></p>
+    <p id="avisoEnvio" class="small">Enviando resultado a Google Sheets...</p>
   </section>
 
 </div>
 
 <script>
-
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwIuwpfKykrKwIPSdduhIdrg8kjVHz6ueXX4dyw5TEzgTBDn8oBbdiZAx4R34-ZtBr6/exec";
-
-const questions = [
-
-{
-question:"La energía se define como:",
-options:[
-"Un material sólido utilizado en la industria.",
-"La capacidad de producir movimiento, luz, calor o cambios en los cuerpos.",
-"Un tipo de combustible fósil.",
-"Un aparato para producir electricidad.",
-"Una corriente de agua natural."
-],
-answer:1
-},
-
-{
-question:"Las fuentes de energía son:",
-options:[
-"Máquinas para generar electricidad.",
-"Recursos de la naturaleza de donde se obtiene energía.",
-"Tipos de aparatos electrónicos.",
-"Sistemas de transporte de energía.",
-"Únicamente combustibles fósiles."
-],
-answer:1
-},
-
-{
-question:"¿Cuál de las siguientes es una fuente de energía renovable?",
-options:[
-"Petróleo",
-"Carbón",
-"Uranio",
-"Sol",
-"Gas natural"
-],
-answer:3
-},
-
-{
-question:"Las fuentes de energía renovables se caracterizan porque:",
-options:[
-"Son imposibles de utilizar.",
-"Se regeneran naturalmente.",
-"Tardan millones de años en formarse.",
-"Son altamente contaminantes.",
-"Solo existen en fábricas."
-],
-answer:1
-}
-
-];
+const questions = [{"question": "La energía se define como:", "options": ["Un material sólido utilizado en la industria.", "La capacidad de producir movimiento, luz, calor o cambios en los cuerpos.", "Un tipo de combustible fósil.", "Un aparato para producir electricidad.", "Una corriente de agua natural."], "answer": 1}, {"question": "Las fuentes de energía son:", "options": ["Máquinas para generar electricidad.", "Recursos de la naturaleza de donde se obtiene energía.", "Tipos de aparatos electrónicos.", "Sistemas de transporte de energía.", "Únicamente combustibles fósiles."], "answer": 1}, {"question": "¿Cuál de las siguientes es una fuente de energía renovable?", "options": ["Petróleo", "Carbón", "Uranio", "Sol", "Gas natural"], "answer": 3}, {"question": "Las fuentes de energía renovables se caracterizan porque:", "options": ["Son imposibles de utilizar.", "Se regeneran naturalmente.", "Tardan millones de años en formarse.", "Son altamente contaminantes.", "Solo existen en fábricas."], "answer": 1}, {"question": "¿Cuál fuente de energía utiliza aerogeneradores?", "options": ["Solar", "Nuclear", "Eólica", "Carbón", "Gas natural"], "answer": 2}, {"question": "El petróleo es considerado:", "options": ["Renovable", "Hidráulico", "Eólico", "No renovable", "Solar"], "answer": 3}, {"question": "La energía hidráulica utiliza principalmente:", "options": ["Viento", "Agua", "Petróleo", "Carbón", "Gas natural"], "answer": 1}, {"question": "¿Cuál de las siguientes fuentes tarda millones de años en formarse?", "options": ["Biomasa", "Solar", "Eólica", "No renovable", "Hidráulica"], "answer": 3}, {"question": "La biomasa corresponde a:", "options": ["Energía producida por el uranio.", "Materia orgánica utilizada para producir energía.", "Energía obtenida del viento.", "Electricidad producida por represas.", "Energía producida por el carbón."], "answer": 1}, {"question": "¿Cuál fuente de energía se utiliza en reactores nucleares?", "options": ["Biomasa", "Uranio", "Agua", "Viento", "Sol"], "answer": 1}, {"question": "Los paneles solares sirven principalmente para:", "options": ["Generar viento artificial.", "Fabricar acero.", "Generar electricidad y calentar agua.", "Transportar petróleo.", "Producir carbón."], "answer": 2}, {"question": "¿Cuál de las siguientes es una fuente no renovable?", "options": ["Solar", "Eólica", "Biomasa", "Gas natural", "Hidráulica"], "answer": 3}, {"question": "La energía eólica se obtiene principalmente del:", "options": ["Carbón", "Viento", "Agua", "Petróleo", "Uranio"], "answer": 1}, {"question": "¿Cuál fuente de energía se usa para producir gasolina y diésel?", "options": ["Sol", "Biomasa", "Petróleo", "Agua", "Eólica"], "answer": 2}, {"question": "La energía hidroeléctrica produce electricidad mediante:", "options": ["Aerogeneradores", "Reactores nucleares", "Corrientes de ríos y represas", "Leña", "Plásticos"], "answer": 2}, {"question": "¿Cuál de las siguientes opciones representa una energía limpia?", "options": ["Carbón", "Petróleo", "Solar", "Gas natural", "Uranio"], "answer": 2}, {"question": "La producción de acero en la industria utiliza principalmente:", "options": ["Biomasa", "Carbón", "Solar", "Eólica", "Hidráulica"], "answer": 1}, {"question": "El gas natural puede utilizarse en:", "options": ["Cocinas", "Vehículos", "Calefacción", "Generación de electricidad", "Todas las anteriores"], "answer": 4}, {"question": "¿Qué tipo de energía utiliza el Sol?", "options": ["Nuclear", "Renovable", "No renovable", "Térmica fósil", "Química"], "answer": 1}, {"question": "La energía renovable ayuda principalmente a:", "options": ["Aumentar la contaminación.", "Agotar recursos rápidamente.", "Reducir el daño ambiental.", "Eliminar el agua de los ríos.", "Destruir ecosistemas."], "answer": 2}, {"question": "¿Cuál de las siguientes fuentes utiliza materia orgánica?", "options": ["Uranio", "Biomasa", "Petróleo", "Carbón", "Gas natural"], "answer": 1}, {"question": "Las energías no renovables pueden agotarse porque:", "options": ["Se producen diariamente.", "Son infinitas.", "Tardan mucho tiempo en formarse.", "Son artificiales.", "Se fabrican en laboratorios."], "answer": 2}, {"question": "La energía nuclear se obtiene principalmente del:", "options": ["Sol", "Agua", "Uranio", "Viento", "Carbón vegetal"], "answer": 2}, {"question": "¿Cuál de estas opciones corresponde a una fuente renovable?", "options": ["Petróleo", "Carbón", "Gas natural", "Biomasa", "Uranio"], "answer": 3}, {"question": "Los combustibles fósiles pertenecen a las fuentes:", "options": ["Renovables", "Limpias", "Naturales infinitas", "No renovables", "Hidráulicas"], "answer": 3}, {"question": "La leña es un ejemplo de:", "options": ["Biomasa", "Energía solar", "Energía nuclear", "Energía hidráulica", "Gas natural"], "answer": 0}, {"question": "¿Cuál fuente de energía genera menos contaminación?", "options": ["Carbón", "Petróleo", "Solar", "Gas natural", "Uranio"], "answer": 2}, {"question": "La energía se usa diariamente para:", "options": ["Iluminar", "Cocinar", "Transportarse", "Utilizar aparatos eléctricos", "Todas las anteriores"], "answer": 4}, {"question": "¿Qué fuente de energía depende del movimiento del aire?", "options": ["Biomasa", "Solar", "Eólica", "Nuclear", "Hidráulica"], "answer": 2}, {"question": "La energía renovable se diferencia de la no renovable porque:", "options": ["Nunca se usa.", "Se regenera naturalmente.", "Produce más humo.", "Solo sirve para vehículos.", "No genera electricidad."], "answer": 1}, {"question": "¿Cuál de estas fuentes se relaciona con los paneles solares?", "options": ["Uranio", "Carbón", "Petróleo", "Sol", "Biomasa"], "answer": 3}, {"question": "Las represas son utilizadas principalmente para producir energía:", "options": ["Solar", "Eólica", "Nuclear", "Hidroeléctrica", "Biomasa"], "answer": 3}, {"question": "¿Por qué es importante utilizar energías limpias?", "options": ["Porque contaminan más.", "Porque agotan rápidamente los recursos.", "Porque ayudan a proteger el medio ambiente.", "Porque producen humo tóxico.", "Porque eliminan el agua de los ríos."], "answer": 2}];
 
 let currentQuestion = 0;
 let score = 0;
 let selectedAnswers = [];
 
-function mezclarArray(array){
-  for(let i=array.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [array[i],array[j]]=[array[j],array[i]];
+function mezclarArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
 
-function startQuiz(){
+function startQuiz() {
+  const nombre = document.getElementById("nombre").value.trim();
+  const curso = document.getElementById("curso").value.trim();
 
-  const nombre=document.getElementById("nombre").value.trim();
-  const curso=document.getElementById("curso").value;
-
-  if(!nombre || !curso){
-    alert("Completa nombre y grado.");
+  if (!nombre || !curso) {
+    alert("Completa el nombre del estudiante y selecciona el grado.");
     return;
   }
 
   mezclarArray(questions);
 
-  questions.forEach(q=>{
-    const correcta=q.options[q.answer];
+  questions.forEach(q => {
+    const correcta = q.options[q.answer];
     mezclarArray(q.options);
-    q.answer=q.options.indexOf(correcta);
+    q.answer = q.options.indexOf(correcta);
   });
 
   document.getElementById("datosCard").classList.add("hidden");
   document.getElementById("quizCard").classList.remove("hidden");
-
   showQuestion();
 }
 
-function showQuestion(){
+function showQuestion() {
+  const q = questions[currentQuestion];
 
-  const q=questions[currentQuestion];
-
-  let html=`
-  <div class="progress">Pregunta ${currentQuestion+1} de ${questions.length}</div>
-  <h2>${q.question}</h2>
+  let html = `
+    <div class="progress">Pregunta ${currentQuestion + 1} de ${questions.length}</div>
+    <h2>${q.question}</h2>
   `;
 
-  q.options.forEach((option,index)=>{
-
+  q.options.forEach((option, index) => {
     html += `
-    <label class="option">
-      <input type="radio" name="option" value="${index}" onchange="nextQuestion()">
-      ${String.fromCharCode(65+index)}. ${option}
-    </label>
+      <label class="option">
+        <input type="radio" name="option" value="${index}" onchange="nextQuestion()">
+        ${String.fromCharCode(65 + index)}. ${option}
+      </label>
     `;
-
   });
 
-  document.getElementById("questionContainer").innerHTML=html;
+  document.getElementById("questionContainer").innerHTML = html;
+  window.scrollTo({ top: document.getElementById("quizCard").offsetTop - 20, behavior: "smooth" });
 }
 
-function nextQuestion(){
+function nextQuestion() {
+  const selected = document.querySelector('input[name="option"]:checked');
+  if (!selected) return;
 
-  const selected=document.querySelector('input[name="option"]:checked');
+  const answer = Number(selected.value);
+  const q = questions[currentQuestion];
 
-  if(!selected)return;
+  selectedAnswers.push({
+    pregunta: currentQuestion + 1,
+    seleccion: String.fromCharCode(65 + answer),
+    correcta: answer === q.answer
+  });
 
-  const answer=Number(selected.value);
-
-  const q=questions[currentQuestion];
-
-  if(answer===q.answer){
+  if (answer === q.answer) {
     score++;
   }
 
-  currentQuestion++;
-
-  if(currentQuestion < questions.length){
-    showQuestion();
-  }else{
-    finishQuiz();
-  }
+  setTimeout(() => {
+    currentQuestion++;
+    if (currentQuestion < questions.length) {
+      showQuestion();
+    } else {
+      finishQuiz();
+    }
+  }, 250);
 }
 
-function enviarResultados(nombre,curso,puntaje,total,nota){
+function enviarResultadosGoogleSheets(nombre, curso, puntaje, total, nota, respuestas) {
+  const params = new URLSearchParams();
+  params.set("nombre", nombre);
+  params.set("curso", curso);
+  params.set("puntaje", puntaje);
+  params.set("total", total);
+  params.set("nota", nota);
+  params.set("respuestas", respuestas);
 
-  const params=new URLSearchParams();
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = APPS_SCRIPT_URL + "?" + params.toString();
+  document.body.appendChild(iframe);
 
-  params.set("nombre",nombre);
-  params.set("curso",curso);
-  params.set("puntaje",puntaje);
-  params.set("total",total);
-  params.set("nota",nota);
-
-  fetch(APPS_SCRIPT_URL + "?" + params.toString())
-  .catch(error=>console.log(error));
+  document.getElementById("avisoEnvio").textContent = "Resultado enviado a Google Sheets.";
 }
 
-function finishQuiz(){
-
+function finishQuiz() {
   document.getElementById("quizCard").classList.add("hidden");
   document.getElementById("resultCard").classList.remove("hidden");
 
-  const total=questions.length;
+  const total = questions.length;
+  const nota = (1 + (score / total) * 9).toFixed(2);
+  const estado = Number(nota) >= 6 ? "APROBADO" : "NO APROBADO";
 
-  const nota=(1+(score/total)*9).toFixed(2);
+  const nombre = document.getElementById("nombre").value.trim();
+  const curso = document.getElementById("curso").value.trim();
 
-  const nombre=document.getElementById("nombre").value.trim();
+  const respuestas = selectedAnswers.map(r =>
+    `P${r.pregunta}:${r.seleccion}(${r.correcta ? "C" : "I"})`
+  ).join(" | ");
 
-  const curso=document.getElementById("curso").value;
+  enviarResultadosGoogleSheets(nombre, curso, score, total, nota, respuestas);
 
-  enviarResultados(nombre,curso,score,total,nota);
-
-  document.getElementById("resultText").innerHTML=`
-  Puntaje: ${score} / ${total}<br>
-  Nota final: ${nota} / 10
+  document.getElementById("resultText").innerHTML = `
+    Puntaje: ${score} / ${total}<br>
+    Nota final: ${nota} / 10<br>
+    Estado: ${estado}
   `;
 
-  document.getElementById("studentText").innerHTML=`
-  Estudiante: ${nombre}<br>
-  Curso: ${curso}
+  document.getElementById("studentText").innerHTML = `
+    Estudiante: ${nombre}<br>
+    Grado: ${curso}
   `;
 }
 
-document.addEventListener("contextmenu",e=>e.preventDefault());
-
-document.addEventListener("keydown",function(e){
-
-  const key=e.key.toLowerCase();
-
-  if((e.ctrlKey||e.metaKey)&&["c","v","x","a","u"].includes(key)){
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("keydown", function(e) {
+  const key = e.key.toLowerCase();
+  if ((e.ctrlKey || e.metaKey) && ["c","v","x","a","u","s","p"].includes(key)) {
     e.preventDefault();
   }
-
-  if(e.key==="F12"){
+  if (e.key === "F12") {
     e.preventDefault();
   }
-
 });
-
 </script>
+
 </body>
 </html>
-```
